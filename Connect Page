@@ -1,0 +1,213 @@
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { base44 } from "@/api/base44Client";
+import { Mail, MapPin, ArrowRight, MessageSquare, Loader2 } from "lucide-react";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import ChatWidget from "@/components/ChatWidget";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  visible: (i = 0) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.1, duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+  }),
+};
+
+export default function Connect() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [conversationId, setConversationId] = useState(null);
+  const [starting, setStarting] = useState(false);
+
+  async function startChat(e) {
+    e.preventDefault();
+    if (!name.trim() || !email.trim()) return;
+    setStarting(true);
+
+    // Check for existing conversation with this email
+    const existing = await base44.entities.ChatConversation.filter({ client_email: email.trim() });
+    if (existing.length > 0) {
+      setConversationId(existing[0].id);
+    } else {
+      const conv = await base44.entities.ChatConversation.create({
+        client_name: name.trim(),
+        client_email: email.trim(),
+        status: "active",
+        unread_count: 0,
+      });
+      setConversationId(conv.id);
+    }
+    setStarting(false);
+  }
+
+  return (
+    <div className="min-h-screen bg-[#F7F7F2]">
+      <Navbar />
+
+      {/* Header */}
+      <section className="pt-32 lg:pt-40 pb-8 lg:pb-12">
+        <div className="max-w-7xl mx-auto px-6 lg:px-[10vw]">
+          <motion.div initial="hidden" animate="visible" className="max-w-2xl">
+            <motion.p
+              variants={fadeUp}
+              custom={0}
+              className="text-xs font-mono text-[#8C8C85] uppercase tracking-[0.3em] mb-4"
+            >
+              The Synapse / 04
+            </motion.p>
+            <motion.h1
+              variants={fadeUp}
+              custom={1}
+              className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-[#1A1A1A] tracking-tight leading-[1.1]"
+            >
+              Let's <span className="text-[#0055FF]">Connect</span>
+            </motion.h1>
+            <motion.div variants={fadeUp} custom={2} className="w-16 h-px bg-[#0055FF] my-6" />
+            <motion.p
+              variants={fadeUp}
+              custom={3}
+              className="text-[#8C8C85] text-base lg:text-lg leading-relaxed"
+            >
+              Start a live conversation with our team. We're here to discuss your project, answer questions, and architect the perfect solution for your needs.
+            </motion.p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Chat + Contact */}
+      <section className="pb-20 lg:pb-32">
+        <div className="max-w-7xl mx-auto px-6 lg:px-[10vw]">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+            {/* Chat panel */}
+            <div className="lg:col-span-2">
+              <div className="glass-card rounded-2xl overflow-hidden" style={{ minHeight: "500px" }}>
+                {!conversationId ? (
+                  <div className="p-8 lg:p-12 flex flex-col items-center justify-center h-full" style={{ minHeight: "500px" }}>
+                    <div className="w-16 h-16 rounded-full bg-[#0055FF]/10 flex items-center justify-center mb-6">
+                      <MessageSquare size={28} className="text-[#0055FF]" />
+                    </div>
+                    <h3 className="font-heading text-2xl font-bold text-[#1A1A1A] mb-2 text-center">
+                      Start a Conversation
+                    </h3>
+                    <p className="text-sm text-[#8C8C85] text-center max-w-sm mb-8">
+                      Enter your name and email to open a direct chat channel with Binary Brothers.
+                    </p>
+
+                    <form onSubmit={startChat} className="w-full max-w-sm space-y-4">
+                      <div>
+                        <label className="text-xs font-mono text-[#8C8C85] uppercase tracking-wider block mb-2">
+                          Your Name
+                        </label>
+                        <input
+                          type="text"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          required
+                          className="w-full bg-[#F7F7F2] border border-[#E5E5E0] rounded-xl px-4 py-3 text-sm text-[#1A1A1A] focus:border-[#0055FF] focus:ring-1 focus:ring-[#0055FF] transition-colors min-h-[44px]"
+                          placeholder="John Doe"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-xs font-mono text-[#8C8C85] uppercase tracking-wider block mb-2">
+                          Your Email
+                        </label>
+                        <input
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          required
+                          className="w-full bg-[#F7F7F2] border border-[#E5E5E0] rounded-xl px-4 py-3 text-sm text-[#1A1A1A] focus:border-[#0055FF] focus:ring-1 focus:ring-[#0055FF] transition-colors min-h-[44px]"
+                          placeholder="john@example.com"
+                        />
+                      </div>
+                      <button
+                        type="submit"
+                        disabled={starting}
+                        className="w-full bg-[#0055FF] text-white py-3.5 rounded-full font-medium text-sm hover:bg-[#0044CC] transition-colors flex items-center justify-center gap-2 min-h-[44px] disabled:opacity-60"
+                      >
+                        {starting ? (
+                          <Loader2 size={16} className="animate-spin" />
+                        ) : (
+                          <>
+                            Open Chat Channel
+                            <ArrowRight size={16} />
+                          </>
+                        )}
+                      </button>
+                    </form>
+                  </div>
+                ) : (
+                  <div style={{ height: "500px" }}>
+                    <ChatWidget
+                      conversationId={conversationId}
+                      clientName={name}
+                      clientEmail={email}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Contact sidebar */}
+            <div className="space-y-6">
+              {/* Server metadata card */}
+              <div className="glass-card rounded-2xl p-6 lg:p-8">
+                <p className="text-xs font-mono text-[#8C8C85] uppercase tracking-[0.2em] mb-6">
+                  Server Metadata
+                </p>
+                <div className="space-y-5">
+                  <div>
+                    <p className="text-xs text-[#8C8C85] mb-1">Email</p>
+                    <a
+                      href="mailto:bbrothers439@gmail.com"
+                      className="flex items-center gap-2 text-sm text-[#1A1A1A] hover:text-[#0055FF] transition-colors font-medium min-h-[44px]"
+                    >
+                      <Mail size={16} className="text-[#0055FF] shrink-0" />
+                      bbrothers439@gmail.com
+                    </a>
+                  </div>
+                  <div className="w-full h-px bg-[#E5E5E0]" />
+                  <div>
+                    <p className="text-xs text-[#8C8C85] mb-1">Location</p>
+                    <a
+                      href="https://maps.google.com/?q=145/1+sonarkhola+dakshin+khan+dhaka+1230+bangladesh"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-start gap-2 text-sm text-[#1A1A1A] hover:text-[#0055FF] transition-colors font-medium min-h-[44px]"
+                    >
+                      <MapPin size={16} className="text-[#0055FF] shrink-0 mt-0.5" />
+                      <span>145/1 Sonarkhola,<br />Dakshin Khan,<br />Dhaka 1230, Bangladesh</span>
+                    </a>
+                  </div>
+                  <div className="w-full h-px bg-[#E5E5E0]" />
+                  <div>
+                    <p className="text-xs text-[#8C8C85] mb-1">Coordinates</p>
+                    <p className="text-sm font-mono text-[#1A1A1A]">23.8103°N, 90.4125°E</p>
+                  </div>
+                  <div className="w-full h-px bg-[#E5E5E0]" />
+                  <div>
+                    <p className="text-xs text-[#8C8C85] mb-1">Response Time</p>
+                    <p className="text-sm font-mono text-[#0055FF]">Within 2-4 hours</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Visual */}
+              <div className="rounded-2xl overflow-hidden">
+                <img
+                  src="https://media.base44.com/images/public/6a439ef3a249f26fc29dbe23/23fd25b33_generated_960bc41c.png"
+                  alt="Light streams flowing through glass architecture representing digital connection"
+                  className="w-full h-48 object-cover"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+}
