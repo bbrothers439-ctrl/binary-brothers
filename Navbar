@@ -1,0 +1,89 @@
+import React, { useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { Menu, X } from "lucide-react";
+
+const navLinks = [
+  { label: "Genesis", path: "/" },
+  { label: "Solutions", path: "/solutions" },
+  { label: "About", path: "/about" },
+  { label: "Connect", path: "/connect" },
+];
+
+export default function Navbar() {
+  const [open, setOpen] = useState(false);
+  const location = useLocation();
+
+  return (
+    <nav className="fixed top-0 left-0 right-0 z-50 glass-card">
+      <div className="max-w-7xl mx-auto px-6 lg:px-[10vw]">
+        <div className="flex items-center justify-between h-16 lg:h-20">
+          <Link to="/" className="flex items-center gap-2 group">
+            <span className="font-heading font-bold text-xl lg:text-2xl text-[#1A1A1A] tracking-tight">
+              Binary<span className="text-[#0055FF]">Brothers</span>
+            </span>
+            <span className="text-xs font-mono text-[#8C8C85] hidden sm:block">/ 01</span>
+          </Link>
+
+          {/* Desktop */}
+          <div className="hidden md:flex items-center gap-8">
+            {navLinks.map((link) => (
+              <Link
+                key={link.path}
+                to={link.path}
+                className={`text-sm font-medium tracking-wide transition-colors min-h-[44px] flex items-center ${
+                  location.pathname === link.path
+                    ? "text-[#0055FF]"
+                    : "text-[#1A1A1A] hover:text-[#0055FF]"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+            <Link
+              to="/connect"
+              className="bg-[#0055FF] text-white px-5 py-2.5 text-sm font-medium rounded-full hover:bg-[#0044CC] transition-colors min-h-[44px] flex items-center"
+            >
+              Start a Project
+            </Link>
+          </div>
+
+          {/* Mobile toggle */}
+          <button
+            onClick={() => setOpen(!open)}
+            className="md:hidden min-h-[44px] min-w-[44px] flex items-center justify-center"
+            aria-label="Toggle menu"
+          >
+            {open ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile menu */}
+      {open && (
+        <div className="md:hidden glass-card border-t border-[#E5E5E0] px-6 pb-6 pt-4">
+          {navLinks.map((link) => (
+            <Link
+              key={link.path}
+              to={link.path}
+              onClick={() => setOpen(false)}
+              className={`block py-3 text-base font-medium min-h-[44px] ${
+                location.pathname === link.path
+                  ? "text-[#0055FF]"
+                  : "text-[#1A1A1A]"
+              }`}
+            >
+              {link.label}
+            </Link>
+          ))}
+          <Link
+            to="/connect"
+            onClick={() => setOpen(false)}
+            className="mt-3 block text-center bg-[#0055FF] text-white px-5 py-3 text-sm font-medium rounded-full min-h-[44px]"
+          >
+            Start a Project
+          </Link>
+        </div>
+      )}
+    </nav>
+  );
+}
