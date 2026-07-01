@@ -1,0 +1,78 @@
+import React from "react";
+import { Link } from "react-router-dom";
+import { Mail, MapPin, ArrowUpRight } from "lucide-react";
+
+export default function Footer() {
+  return (
+    <footer className="bg-[#1A1A1A] text-white">
+      <div className="max-w-7xl mx-auto px-6 lg:px-[10vw] py-16 lg:py-24">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16">
+          {/* Brand */}
+          <div>
+            <h3 className="font-heading text-2xl lg:text-3xl font-bold tracking-tight mb-4">
+              Binary<span className="text-[#0055FF]">Brothers</span>
+            </h3>
+            <p className="text-[#8C8C85] text-sm leading-relaxed max-w-xs">
+              Engineering sentient digital ecosystems through AI-generated architecture. Every pixel is a calculated decision.
+            </p>
+          </div>
+
+          {/* Navigation */}
+          <div>
+            <p className="text-xs font-mono text-[#8C8C85] mb-6 uppercase tracking-widest">Navigation</p>
+            <div className="flex flex-col gap-3">
+              {[
+                { label: "Genesis", path: "/" },
+                { label: "Solutions & Pricing", path: "/solutions" },
+                { label: "About & Process", path: "/about" },
+                { label: "Connect", path: "/connect" },
+              ].map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className="text-white/70 hover:text-[#0055FF] transition-colors text-sm flex items-center gap-1 group min-h-[44px]"
+                >
+                  {link.label}
+                  <ArrowUpRight size={12} className="opacity-0 group-hover:opacity-100 transition-opacity" />
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Contact */}
+          <div>
+            <p className="text-xs font-mono text-[#8C8C85] mb-6 uppercase tracking-widest">Server Location</p>
+            <div className="flex flex-col gap-4">
+              <a
+                href="mailto:bbrothers439@gmail.com"
+                className="flex items-start gap-3 text-white/70 hover:text-[#0055FF] transition-colors text-sm min-h-[44px]"
+              >
+                <Mail size={16} className="mt-0.5 shrink-0" />
+                bbrothers439@gmail.com
+              </a>
+              <a
+                href="https://maps.google.com/?q=145/1+sonarkhola+dakshin+khan+dhaka+1230+bangladesh"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-start gap-3 text-white/70 hover:text-[#0055FF] transition-colors text-sm min-h-[44px]"
+              >
+                <MapPin size={16} className="mt-0.5 shrink-0" />
+                <span>145/1 Sonarkhola, Dakshin Khan,<br />Dhaka 1230, Bangladesh</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Separator */}
+        <div className="mt-16 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-[#8C8C85] font-mono">
+            © {new Date().getFullYear()} Binary Brothers. All systems operational.
+          </p>
+          <p className="text-xs text-[#8C8C85] font-mono">
+            Dhaka, BD — 23.8103°N, 90.4125°E
+          </p>
+        </div>
+      </div>
+    </footer>
+  );
+}
