@@ -1,0 +1,95 @@
+import React, { useState } from "react";
+import { Switch } from "@/components/ui/switch";
+import { Check } from "lucide-react";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+
+const tiers = {
+  Basic: {
+    dev: "$150 – $250",
+    mgmt: "$100 – $120",
+    features: ["Responsive single-page design", "Basic SEO setup", "Contact form integration", "Mobile-optimized layout", "1 round of revisions"],
+  },
+  Standard: {
+    dev: "$260 – $370",
+    mgmt: "$150 – $190",
+    features: ["Multi-page website (up to 5)", "Advanced SEO optimization", "Custom animations", "Social media integration", "Content management system", "3 rounds of revisions"],
+  },
+  Premium: {
+    dev: "$390 – $480",
+    mgmt: "$200 – $275",
+    features: ["Full custom design (up to 10 pages)", "E-commerce capabilities", "Advanced analytics dashboard", "Performance optimization", "Priority support channel", "API integrations", "Unlimited revisions"],
+    popular: true,
+  },
+  Deluxe: {
+    dev: "$500 – $700",
+    mgmt: "$290 – $365",
+    features: ["Enterprise-grade architecture", "Custom AI-powered features", "Dedicated project manager", "Multi-language support", "Advanced security protocols", "Database design & setup", "24/7 priority support", "Unlimited revisions"],
+  },
+};
+
+export default function PricingCard({ tier }) {
+  const [showMgmt, setShowMgmt] = useState(false);
+  const data = tiers[tier];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-50px" }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      className={`glass-card rounded-2xl p-8 lg:p-10 relative flex flex-col h-full ${
+        data.popular ? "ring-2 ring-[#0055FF] shadow-xl shadow-[#0055FF]/10" : ""
+      }`}
+    >
+      {data.popular && (
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#0055FF] text-white text-xs font-mono px-4 py-1 rounded-full tracking-wider">
+          RECOMMENDED
+        </div>
+      )}
+
+      <div className="mb-8">
+        <p className="text-xs font-mono text-[#8C8C85] uppercase tracking-[0.2em] mb-2">{tier}</p>
+        <p className="font-heading text-3xl lg:text-4xl font-bold text-[#1A1A1A] tracking-tight">
+          {data.dev}
+        </p>
+        <p className="text-sm text-[#8C8C85] mt-1">Development cost</p>
+      </div>
+
+      {/* Management toggle */}
+      <div className="flex items-center justify-between bg-[#F7F7F2] rounded-xl px-4 py-3 mb-8">
+        <div>
+          <p className="text-sm font-medium text-[#1A1A1A]">Add Monthly Management</p>
+          <p className="text-xs text-[#8C8C85] font-mono mt-0.5">
+            {showMgmt ? data.mgmt + "/mo" : "Toggle to see cost"}
+          </p>
+        </div>
+        <Switch checked={showMgmt} onCheckedChange={setShowMgmt} />
+      </div>
+
+      {/* Features */}
+      <div className="flex-1">
+        <p className="text-xs font-mono text-[#8C8C85] uppercase tracking-[0.2em] mb-4">Core Algorithms</p>
+        <ul className="space-y-3">
+          {data.features.map((f) => (
+            <li key={f} className="flex items-start gap-3 text-sm text-[#1A1A1A]">
+              <Check size={16} className="text-[#0055FF] shrink-0 mt-0.5" />
+              {f}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <Link
+        to="/connect"
+        className={`mt-8 text-center py-3.5 rounded-full font-medium text-sm transition-colors min-h-[44px] flex items-center justify-center ${
+          data.popular
+            ? "bg-[#0055FF] text-white hover:bg-[#0044CC]"
+            : "border border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white"
+        }`}
+      >
+        Get Started
+      </Link>
+    </motion.div>
+  );
+}
